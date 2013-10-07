@@ -1,32 +1,41 @@
-{ "author": "Dom Harrington"
-, "name": "cf-signpost"
-, "description": "URL routing for sections and articles"
-, "version": "0.0.1"
-, "tags": []
-, "repository":
-  { "type": "git"
-  , "url": "git@github.com:clocklimited/cf-signpost"
-  }
-, "publishConfig": {
+{
+  "author": "Dom Harrington",
+  "name": "cf-signpost",
+  "description": "URL routing for sections and articles",
+  "version": "0.0.1",
+  "tags": [],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:clocklimited/cf-signpost"
+  },
+  "publishConfig": {
     "registry": "http://npm.clockte.ch"
-  }
-, "main": ""
-, "scripts":
-  { "lint": "./node_modules/.bin/jshint . --reporter=./node_modules/jshint-full-path/index.js"
-  , "pretest": "npm run-script lint; exit 0"
-  , "test": "./node_modules/.bin/mocha -R spec"
-  , "prepublish": "npm run-script lint && npm test"
-  }
-, "engines":
-  { "node": ">=0.8"
-  }
-, "dependencies":
-  {
-  }
-, "devDependencies":
-  { "mocha": "*"
-  , "should": "*"
-  , "jshint": "*"
-  , "jshint-full-path": "*"
+  },
+  "main": "signpost.js",
+  "scripts": {
+    "lint": "./node_modules/.bin/jshint . --reporter=./node_modules/jshint-full-path/index.js",
+    "pretest": "npm run-script lint; exit 0",
+    "test": "./node_modules/.bin/mocha -R spec",
+    "prepublish": "npm run-script lint && npm test"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*",
+    "jshint": "*",
+    "jshint-full-path": "*",
+    "async": "~0.2.9",
+    "lodash": "~2.2.1",
+    "crud-service": "0.0.5",
+    "validity": "0.0.3",
+    "schemata": "0.0.7",
+    "validity-date-before-property": "0.0.1",
+    "save-memgo": "0.0.1",
+    "regg": "0.0.2",
+    "moment": "~2.2.1",
+    "cf-visibility-check": "0.0.1"
   }
 }
