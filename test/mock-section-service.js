@@ -140,7 +140,7 @@ module.exports = function (serviceLocator) {
 
   service.findPublic = function (query, options, callback) {
 
-    var publicQuery = filter.publicQuery(query)
+    var publicQuery = filter.publicQuery(query, options)
 
     service.find(publicQuery, options, callback)
   }

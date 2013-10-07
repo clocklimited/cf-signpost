@@ -11,12 +11,17 @@ function signpost(sectionService, articleService) {
   function findSection(url, cb) {
     var urlParts = urlParse(url, true)
       , query = { fullUrlPath: urlParts.pathname }
+      , options = {}
 
     if (typeof urlParts.query.previewId !== 'undefined') {
       query['previewId'] = urlParts.query.previewId
     }
 
-    sectionService.findPublic(query, function (error, sections) {
+    if (typeof urlParts.query.date !== 'undefined') {
+      options = { date: urlParts.query.date }
+    }
+
+    sectionService.findPublic(query, options, function (error, sections) {
       if (error) return cb(error)
       if (sections.length > 0) {
         cb(null, sections[0])
@@ -29,11 +34,16 @@ function signpost(sectionService, articleService) {
   function findArticle(url, cb) {
     var urlParts = urlParse(url, true)
       , lookupFn
+      , options = {}
+
+    if (typeof urlParts.query.date !== 'undefined') {
+      options = { date: urlParts.query.date }
+    }
 
     if (typeof urlParts.query.previewId !== 'undefined') {
       lookupFn = articleService.find.bind(null, { previewId: urlParts.query.previewId })
     } else {
-      lookupFn = articleService.findPublicByUrl.bind(null, urlParts.pathname, {})
+      lookupFn = articleService.findPublicByUrl.bind(null, urlParts.pathname, options)
     }
 
     lookupFn(function (error, article) {

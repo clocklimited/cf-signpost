@@ -107,7 +107,7 @@ module.exports = function (serviceLocator) {
 
   // Find the articles that are available to the public
   service.findPublic = function (query, options, callback) {
-    var publicQuery = filter.publicQuery(query)
+    var publicQuery = filter.publicQuery(query, options)
 
     service.find(publicQuery, options, callback)
   }
