@@ -65,6 +65,16 @@ describe('signpost', function () {
 
   after(function (done) {
     sectionService.deleteMany({ name: 'Test Section' }, done)
+  it('should throw if no `sectionService` provided', function () {
+    (function () {
+      createSignpost()
+    }).should.throwError(/sectionService must be provided/)
+  })
+
+  it('should throw if no `articleService` provided', function () {
+    (function () {
+      createSignpost(sectionService)
+    }).should.throwError(/articleService must be provided/)
   })
 
   describe('findSection()', function () {

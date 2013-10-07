@@ -3,6 +3,8 @@ module.exports = signpost
 var urlParse = require('url').parse
 
 function signpost(sectionService, articleService) {
+  if (!sectionService) throw new Error('sectionService must be provided')
+  if (!articleService) throw new Error('articleService must be provided')
 
   var self = {}
 
