@@ -11,6 +11,8 @@ var createSignpost = require('../signpost')
   , sectionService
   , articleService
   , dbConnection
+  , mongoHost = process.env.NODE_MONGO_HOST || '127.0.0.1'
+  , mongoPort = process.env.NODE_MONGO_PORT || 27017
 
 describe('signpost', function () {
 
@@ -63,8 +65,9 @@ describe('signpost', function () {
   }
 
   function dbConnect(next) {
-    MongoClient.connect('mongodb://127.0.0.1:27017/' +
-      Math.round(Math.random() * 100000000000).toString(36), function (err, db) {
+    var mongoConnectionString = 'mongodb://' + mongoHost +':' + mongoPort + '/' +
+      Math.round(Math.random() * 100000000000).toString(36)
+    MongoClient.connect(mongoConnectionString, function (err, db) {
 
       dbConnection = db
 
