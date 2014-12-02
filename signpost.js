@@ -1,6 +1,7 @@
 module.exports = signpost
 
 var urlParse = require('url').parse
+  , async = require('async')
 
 function signpost(sectionService, articleService) {
   if (!sectionService) throw new Error('sectionService must be provided')
@@ -32,7 +33,9 @@ function signpost(sectionService, articleService) {
   }
 
   function findArticle(url, cb) {
-    var urlParts = urlParse(url, true)
+    var decodedUrl = decodeURI(url)
+      , urlParts = urlParse(url, true)
+      , decodedUrlParts = urlParse(decodedUrl, true)
       , lookupFn
       , options = {}
 
@@ -50,27 +53,63 @@ function signpost(sectionService, articleService) {
       if (error) return cb(error)
 
       if (typeof article !== 'undefined') {
-
-        var singleArticle
-        // article can come back as either a single article or an array
-        if (Array.isArray(article)) {
-          if (article.length === 0) {
-            return cb(null, false)
-          } else {
-            singleArticle = article[0]
-          }
-        } else {
-          singleArticle = article
-        }
-
-        // Find the article's section
-        sectionService.read(singleArticle.section, function (error, section) {
-          cb(null, { section: section, article: singleArticle })
-        })
-
+        returnArticle(article, cb)
       } else {
-        cb(null, false)
+
+        articleService.findPublicByUrl(decodedUrlParts.pathname, options, function (error, article) {
+          if (error) return cb(error)
+
+          if (typeof article !== 'undefined') {
+            returnArticle(article, cb)
+          } else {
+            cb(null, false)
+          }
+        })
       }
+    })
+  }
+
+  function returnArticle(article, cb) {
+    async.waterfall([
+      function (callback) {
+        getSingleArticle(article, function (error, singleArticle) {
+          if (error) cb(null, false)
+
+          callback(null, singleArticle)
+        })
+      }
+    , function (singleArticle, callback) {
+        getArticleSection(singleArticle.section, function (error, articleSection) {
+          if (error) cb('Signpost can‘t get article‘s section')
+
+          callback(null, singleArticle, articleSection)
+        })
+      }
+    ]
+    , function (err, singleArticle, section) {
+        cb(err, { section: section, article: singleArticle })
+      }
+    )
+  }
+
+  function getSingleArticle(article, callback) {
+    // article can come back as either a single article or an array
+    if (Array.isArray(article)) {
+      if (article.length === 0) {
+        return callback(true, false)
+      } else {
+        return callback(null, article[0])
+      }
+    } else {
+      return callback(null, article)
+    }
+  }
+
+  function getArticleSection(articleSection, callback) {
+    sectionService.read(articleSection, function (error, section) {
+      if (error) return callback(error)
+
+      callback(null, section)
     })
   }
 
