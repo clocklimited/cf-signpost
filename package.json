@@ -2,7 +2,7 @@
   "author": "Dom Harrington",
   "name": "cf-signpost",
   "description": "URL routing for sections and articles",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "tags": [],
   "repository": {
     "type": "git",
