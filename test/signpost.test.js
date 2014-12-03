@@ -40,6 +40,16 @@ describe('signpost', function () {
           , liveDate: moment().add('months', 1).startOf('day').toDate()
           , expiryDate: moment().add('months', 2).startOf('day').toDate()
           })
+      , async.apply(sectionService.create,
+          { name: 'Test section (for) url encoding'
+          , slug: 'test-section-(for)-url-encoding'
+          , visible: true
+          })
+      , async.apply(sectionService.create,
+          { name: 'Test section %28with%29 encoded characters'
+          , slug: 'test-section-%28with%29-encoded-characters'
+          , visible: true
+          })
       ], next)
   }
 
@@ -60,6 +70,25 @@ describe('signpost', function () {
         , liveDate: moment().add('months', 1).startOf('day').toDate()
         , expiryDate: moment().add('months', 2).startOf('day').toDate()
         , section: section[1]._id
+        }
+      , { longTitle: 'Encodable characters (in) slug article'
+        , slug: 'encodable-characters-(in)-slug-article'
+        , previewId: 'encodable'
+        , state: 'Published'
+        , liveDate: moment().subtract('months', 1).toDate()
+        , section: section[0]._id
+        }
+      , { longTitle: 'Encoded characters in %28slug%29 article'
+        , slug: 'encoded-characters-in-%28slug%29-article'
+        , previewId: 'encodable'
+        , state: 'Published'
+        , liveDate: moment().subtract('months', 1).toDate()
+        , section: section[0]._id
+        }
+      , { longTitle: 'Article with no valid section'
+        , slug: 'article-with-no-valid-section'
+        , section: 'bad-section-id'
+        , state: 'Published'
         }
       ], articleService.create, next)
   }
@@ -173,6 +202,30 @@ describe('signpost', function () {
         done()
       })
     })
+
+    it('should callback with a section when slug has encodable characters', function (done) {
+      signpost.findSection('/test-section-(for)-url-encoding', function (err, section) {
+        should.not.exist(err)
+        section.should.have.property('name', 'Test section (for) url encoding')
+        done()
+      })
+    })
+
+    it('should callback with a section when URL has encoded characters', function (done) {
+      signpost.findSection('/test-section-%28for%29-url-encoding', function (err, section) {
+        should.not.exist(err)
+        section.should.have.property('name', 'Test section (for) url encoding')
+        done()
+      })
+    })
+
+    it('should callback with a section when slug has encoded characters', function (done) {
+      signpost.findSection('/test-section-%28with%29-encoded-characters', function (err, section) {
+        should.not.exist(err)
+        section.should.have.property('name', 'Test section %28with%29 encoded characters')
+        done()
+      })
+    })
   })
 
   describe('findArticle()', function () {
@@ -191,6 +244,56 @@ describe('signpost', function () {
         should.not.exist(err)
         data.section.should.have.property('name', 'Test Section')
         data.article.should.have.property('longTitle', 'Hidden article')
+        done()
+      })
+    })
+
+    it('should callback with an article and its section when a matching url'
+     + ' that contains url encodable characters is provided', function (done) {
+      signpost.findArticle('/unittest/encodable-characters-(in)-slug-article', function (err, data) {
+        should.not.exist(err)
+        data.section.should.have.property('name', 'Test Section')
+        data.article.should.have.property('longTitle', 'Encodable characters (in) slug article')
+        done()
+      })
+    })
+
+    it('should callback with an article and its section when a matching url'
+     + ' that has been url-encoded is provided', function (done) {
+      signpost.findArticle('/unittest/encodable-characters-%28in%29-slug-article', function (err, data) {
+        should.not.exist(err)
+        data.section.should.have.property('name', 'Test Section')
+        data.article.should.have.property('longTitle', 'Encodable characters (in) slug article')
+        done()
+      })
+    })
+
+    it('should callback with an article and its section when a matching url'
+     + ' that has url-encoded characters is provided', function (done) {
+      signpost.findArticle('/unittest/encoded-characters-in-%28slug%29-article', function (err, data) {
+        should.not.exist(err)
+        data.section.should.have.property('name', 'Test Section')
+        data.article.should.have.property('longTitle', 'Encoded characters in %28slug%29 article')
+        done()
+      })
+    })
+
+    it('should callback with an article and its section when a matching url'
+     + ' that has url-encoded characters is provided', function (done) {
+      signpost.findArticle('/unittest/encoded-characters-in-%28slug%29-article', function (err, data) {
+        should.not.exist(err)
+        data.section.should.have.property('name', 'Test Section')
+        data.article.should.have.property('longTitle', 'Encoded characters in %28slug%29 article')
+        done()
+      })
+    })
+
+    it('should callback with a falsey value but no error when a matching article’s section can not be found',
+      function (done) {
+
+      signpost.findArticle('/fake-section/article-with-no-valid-section', function (err, data) {
+        should.not.exist(err)
+        data.should.equal(false)
         done()
       })
     })

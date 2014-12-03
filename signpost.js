@@ -9,8 +9,10 @@ function signpost(sectionService, articleService) {
   var self = {}
 
   function findSection(url, cb) {
-    var urlParts = urlParse(url, true)
-      , query = { fullUrlPath: urlParts.pathname }
+    var decodedUrl = decodeURI(url)
+      , decodedUrlParts = urlParse(decodedUrl, true)
+      , urlParts = urlParse(url, true)
+      , query = { $or: [ { fullUrlPath: urlParts.pathname }, { fullUrlPath: decodedUrlParts.pathname } ] }
       , options = {}
 
     if (typeof urlParts.query.previewId !== 'undefined') {
@@ -32,7 +34,9 @@ function signpost(sectionService, articleService) {
   }
 
   function findArticle(url, cb) {
-    var urlParts = urlParse(url, true)
+    var decodedUrl = decodeURI(url)
+      , decodedUrlParts = urlParse(decodedUrl, true)
+      , urlParts = urlParse(url, true)
       , lookupFn
       , options = {}
 
@@ -50,29 +54,46 @@ function signpost(sectionService, articleService) {
       if (error) return cb(error)
 
       if (typeof article !== 'undefined') {
-
-        var singleArticle
-        // article can come back as either a single article or an array
-        if (Array.isArray(article)) {
-          if (article.length === 0) {
-            return cb(null, false)
-          } else {
-            singleArticle = article[0]
-          }
-        } else {
-          singleArticle = article
-        }
-
-        // Find the article's section
-        sectionService.read(singleArticle.section, function (error, section) {
-          cb(null, { section: section, article: singleArticle })
-        })
-
+        returnArticle(article, cb)
       } else {
-        cb(null, false)
+
+        articleService.findPublicByUrl(decodedUrlParts.pathname, options, function (error, article) {
+          if (error) return cb(error)
+
+          if (typeof article !== 'undefined') {
+            returnArticle(article, cb)
+          } else {
+            cb(null, false)
+          }
+        })
       }
     })
   }
+
+  function returnArticle(article, cb) {
+    article = getSingleArticle(article)
+    if (!article) return cb(null, false)
+
+    sectionService.read(article.section, function (error, section) {
+      if (error) return cb(null, false)
+
+      cb(error, { section: section, article: article })
+    })
+  }
+
+  function getSingleArticle(article) {
+    // article can come back as either a single article or an array
+    if (Array.isArray(article)) {
+      if (article.length === 0) {
+        return false
+      } else {
+        return article[0]
+      }
+    } else {
+      return article
+    }
+  }
+
 
   self.findSection = findSection
   self.findArticle = findArticle
