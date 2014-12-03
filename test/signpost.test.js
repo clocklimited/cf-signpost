@@ -75,6 +75,11 @@ describe('signpost', function () {
         , liveDate: moment().subtract('months', 1).toDate()
         , section: section[0]._id
         }
+      , { longTitle: 'Article with no valid section'
+        , slug: 'article-with-no-valid-section'
+        , section: 'bad-section-id'
+        , state: 'Published'
+        }
       ], articleService.create, next)
   }
 
@@ -245,6 +250,16 @@ describe('signpost', function () {
         should.not.exist(err)
         data.section.should.have.property('name', 'Test Section')
         data.article.should.have.property('longTitle', 'Encoded characters in %28slug%29 article')
+        done()
+      })
+    })
+
+    it('should callback with a falsey value but no error when a matching article’s section can not be found',
+      function (done) {
+
+      signpost.findArticle('/fake-section/article-with-no-valid-section', function (err, data) {
+        should.not.exist(err)
+        data.should.equal(false)
         done()
       })
     })

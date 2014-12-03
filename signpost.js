@@ -1,7 +1,6 @@
 module.exports = signpost
 
 var urlParse = require('url').parse
-  , async = require('async')
 
 function signpost(sectionService, articleService) {
   if (!sectionService) throw new Error('sectionService must be provided')
@@ -70,48 +69,29 @@ function signpost(sectionService, articleService) {
   }
 
   function returnArticle(article, cb) {
-    async.waterfall([
-      function (callback) {
-        getSingleArticle(article, function (error, singleArticle) {
-          if (error) cb(null, false)
+    article = getSingleArticle(article)
+    if (!article) return cb(null, false)
 
-          callback(null, singleArticle)
-        })
-      }
-    , function (singleArticle, callback) {
-        getArticleSection(singleArticle.section, function (error, articleSection) {
-          if (error) cb('Signpost can‘t get article‘s section')
+    sectionService.read(article.section, function (error, section) {
+      if (error) return cb(null, false)
 
-          callback(null, singleArticle, articleSection)
-        })
-      }
-    ]
-    , function (err, singleArticle, section) {
-        cb(err, { section: section, article: singleArticle })
-      }
-    )
+      cb(error, { section: section, article: article })
+    })
   }
 
-  function getSingleArticle(article, callback) {
+  function getSingleArticle(article) {
     // article can come back as either a single article or an array
     if (Array.isArray(article)) {
       if (article.length === 0) {
-        return callback(true, false)
+        return false
       } else {
-        return callback(null, article[0])
+        return article[0]
       }
     } else {
-      return callback(null, article)
+      return article
     }
   }
 
-  function getArticleSection(articleSection, callback) {
-    sectionService.read(articleSection, function (error, section) {
-      if (error) return callback(error)
-
-      callback(null, section)
-    })
-  }
 
   self.findSection = findSection
   self.findArticle = findArticle
