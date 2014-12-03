@@ -9,8 +9,10 @@ function signpost(sectionService, articleService) {
   var self = {}
 
   function findSection(url, cb) {
-    var urlParts = urlParse(url, true)
-      , query = { fullUrlPath: urlParts.pathname }
+    var decodedUrl = decodeURI(url)
+      , decodedUrlParts = urlParse(decodedUrl, true)
+      , urlParts = urlParse(url, true)
+      , query = { $or: [ { fullUrlPath: urlParts.pathname }, { fullUrlPath: decodedUrlParts.pathname } ] }
       , options = {}
 
     if (typeof urlParts.query.previewId !== 'undefined') {
@@ -33,8 +35,8 @@ function signpost(sectionService, articleService) {
 
   function findArticle(url, cb) {
     var decodedUrl = decodeURI(url)
-      , urlParts = urlParse(url, true)
       , decodedUrlParts = urlParse(decodedUrl, true)
+      , urlParts = urlParse(url, true)
       , lookupFn
       , options = {}
 

@@ -40,6 +40,16 @@ describe('signpost', function () {
           , liveDate: moment().add('months', 1).startOf('day').toDate()
           , expiryDate: moment().add('months', 2).startOf('day').toDate()
           })
+      , async.apply(sectionService.create,
+          { name: 'Test section (for) url encoding'
+          , slug: 'test-section-(for)-url-encoding'
+          , visible: true
+          })
+      , async.apply(sectionService.create,
+          { name: 'Test section %28with%29 encoded characters'
+          , slug: 'test-section-%28with%29-encoded-characters'
+          , visible: true
+          })
       ], next)
   }
 
@@ -189,6 +199,30 @@ describe('signpost', function () {
       signpost.findSection('/not-yet-live?date=' + oneMonthAhead, function (err, section) {
         should.not.exist(err)
         section.should.have.property('name', 'Not Yet Live')
+        done()
+      })
+    })
+
+    it('should callback with a section when slug has encodable characters', function (done) {
+      signpost.findSection('/test-section-(for)-url-encoding', function (err, section) {
+        should.not.exist(err)
+        section.should.have.property('name', 'Test section (for) url encoding')
+        done()
+      })
+    })
+
+    it('should callback with a section when URL has encoded characters', function (done) {
+      signpost.findSection('/test-section-%28for%29-url-encoding', function (err, section) {
+        should.not.exist(err)
+        section.should.have.property('name', 'Test section (for) url encoding')
+        done()
+      })
+    })
+
+    it('should callback with a section when slug has encoded characters', function (done) {
+      signpost.findSection('/test-section-%28with%29-encoded-characters', function (err, section) {
+        should.not.exist(err)
+        section.should.have.property('name', 'Test section %28with%29 encoded characters')
         done()
       })
     })
