@@ -22,31 +22,31 @@ describe('signpost', function () {
     sl.register('sectionService', sectionService)
 
     async.series(
-      [ async.apply(sectionService.create,
-          { name: 'Test Section'
+      [ async.apply(sectionService.create
+        , { name: 'Test Section'
           , slug: 'unittest'
           , visible: true
           })
-      , async.apply(sectionService.create,
-          { name: 'Test Section'
+      , async.apply(sectionService.create
+        , { name: 'Test Section'
           , slug: 'previewtest'
           , visible: false
           , previewId: 'unit'
           })
-      , async.apply(sectionService.create,
-          { name: 'Not Yet Live'
+      , async.apply(sectionService.create
+        , { name: 'Not Yet Live'
           , slug: 'not-yet-live'
           , visible: true
           , liveDate: moment().add('months', 1).startOf('day').toDate()
           , expiryDate: moment().add('months', 2).startOf('day').toDate()
           })
-      , async.apply(sectionService.create,
-          { name: 'Test section (for) url encoding'
+      , async.apply(sectionService.create
+        , { name: 'Test section (for) url encoding'
           , slug: 'test-section-(for)-url-encoding'
           , visible: true
           })
-      , async.apply(sectionService.create,
-          { name: 'Test section %28with%29 encoded characters'
+      , async.apply(sectionService.create
+        , { name: 'Test section %28with%29 encoded characters'
           , slug: 'test-section-%28with%29-encoded-characters'
           , visible: true
           })
@@ -94,7 +94,7 @@ describe('signpost', function () {
   }
 
   function dbConnect(next) {
-    var mongoConnectionString = 'mongodb://' + mongoHost +':' + mongoPort + '/' +
+    var mongoConnectionString = 'mongodb://' + mongoHost + ':' + mongoPort + '/' +
       Math.round(Math.random() * 100000000000).toString(36)
     MongoClient.connect(mongoConnectionString, function (err, db) {
 
@@ -165,7 +165,7 @@ describe('signpost', function () {
       })
     })
 
-    it('should callback with a falsey value but no error when not matching URL is found', function (done) {
+    it('should callback with a falsey value but no error when matching URL is not found', function (done) {
       signpost.findSection('/no-matching-url', function (err, section) {
         should.not.exist(err)
         section.should.equal(false)
@@ -173,8 +173,16 @@ describe('signpost', function () {
       })
     })
 
-    it('should callback with a falsey value but no error when a matching URL is found but it is not visible yet',
-      function (done) {
+    it('should callback with a error if the URL is malformed', function (done) {
+      signpost.findSection('/no-matching-url?ids=a%AFc', function (err, section) {
+        should.exist(err)
+        should.equal(section, undefined)
+        done()
+      })
+    })
+
+    it('should callback with a falsey value but no error when a matching URL is found but it is not visible yet'
+      , function (done) {
 
       signpost.findSection('/previewtest', function (err, section) {
         should.not.exist(err)
@@ -288,8 +296,8 @@ describe('signpost', function () {
       })
     })
 
-    it('should callback with a falsey value but no error when a matching article’s section can not be found',
-      function (done) {
+    it('should callback with a falsey value but no error when a matching article’s section can not be found'
+      , function (done) {
 
       signpost.findArticle('/fake-section/article-with-no-valid-section', function (err, data) {
         should.not.exist(err)
@@ -298,10 +306,18 @@ describe('signpost', function () {
       })
     })
 
+    it('should callback with a error if the URL is malformed', function (done) {
+      signpost.findArticle('/no-matching-url?ids=a%AFc', function (err, data) {
+        should.exist(err)
+        should.equal(data, undefined)
+        done()
+      })
+    })
+
     it('should callback with an article when it is live but a previewId is also found')
 
-    it('should callback with a falsey value but no error when a matching URL is found but it is not visible yet',
-      function (done) {
+    it('should callback with a falsey value but no error when a matching URL is found but it is not visible yet'
+      , function (done) {
 
       signpost.findArticle('/previewtest/hidden-article', function (err, data) {
         should.not.exist(err)
