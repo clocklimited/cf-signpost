@@ -8,19 +8,24 @@ function signpost (sectionService, articleService) {
 
   var self = {}
 
-  function findSection (url, cb) {
+  function findSection (url, options, cb) {
+    // No options provided, so default to {}
+    if (arguments.length === 2) {
+      cb = options
+      options = {}
+    }
+
     var decodedUrl = decodeURI(url)
       , decodedUrlParts = urlParse(decodedUrl, true)
       , urlParts = urlParse(url, true)
       , query = { $or: [ { fullUrlPath: urlParts.pathname }, { fullUrlPath: decodedUrlParts.pathname } ] }
-      , options = {}
 
     if (typeof urlParts.query.previewId !== 'undefined') {
       query['previewId'] = urlParts.query.previewId
     }
 
     if (typeof urlParts.query.date !== 'undefined') {
-      options = { date: urlParts.query.date }
+      options.date = urlParts.query.date
     }
 
     sectionService.findPublic(query, options, function (error, sections) {
@@ -33,15 +38,20 @@ function signpost (sectionService, articleService) {
     })
   }
 
-  function findArticle (url, cb) {
+  function findArticle (url, options, cb) {
+    // No options provided, so default to {}
+    if (arguments.length === 2) {
+      cb = options
+      options = {}
+    }
+
     var decodedUrl = decodeURI(url)
       , decodedUrlParts = urlParse(decodedUrl, true)
       , urlParts = urlParse(url, true)
       , lookupFn
-      , options = {}
 
     if (typeof urlParts.query.date !== 'undefined') {
-      options = { date: urlParts.query.date }
+      options.date = urlParts.query.date
     }
 
     if (typeof urlParts.query.previewId !== 'undefined') {

@@ -1,6 +1,7 @@
 var createSignpost = require('../signpost')
   , async = require('async')
   , should = require('should')
+  , assert = require('assert')
   , sl = require('regg')()
   , persistence = require('regg')()
   , _register = persistence.register
@@ -50,6 +51,18 @@ describe('signpost', function () {
           , slug: 'test-section-%28with%29-encoded-characters'
           , visible: true
           })
+      // Creating 2 sections with the same slug, but different names to allow
+      // testing of passing through sort options
+      , async.apply(sectionService.create,
+          { name: 'AAAAA'
+          , slug: 'test-find-public-options'
+          , visible: true
+          })
+      , async.apply(sectionService.create,
+          { name: 'ZZZZZ'
+          , slug: 'test-find-public-options'
+          , visible: true
+          })
       ], next)
   }
 
@@ -88,6 +101,21 @@ describe('signpost', function () {
       , { longTitle: 'Article with no valid section'
         , slug: 'article-with-no-valid-section'
         , section: 'bad-section-id'
+        , state: 'Published'
+        }
+
+      // Creating 2 articles with the same slug, but different titles to allow
+      // testing of passing through sort options
+      , { longTitle: 'AAAAA'
+        , slug: 'test-find-public-options'
+        , liveDate: moment().subtract('months', 1).toDate()
+        , section: section[0]._id
+        , state: 'Published'
+        }
+      , { longTitle: 'ZZZZZ'
+        , slug: 'test-find-public-options'
+        , liveDate: moment().subtract('months', 1).toDate()
+        , section: section[0]._id
         , state: 'Published'
         }
       ], articleService.create, next)
@@ -227,6 +255,14 @@ describe('signpost', function () {
         done()
       })
     })
+
+    it('should support passing in options to the findPublic call', function (done) {
+      signpost.findSection('/test-find-public-options', { sort: { name: -1 } }, function (err, section) {
+        if (err) return done(err)
+        assert.equal(section.name, 'ZZZZZ')
+        done()
+      })
+    })
   })
 
   describe('findArticle()', function () {
@@ -337,6 +373,15 @@ describe('signpost', function () {
         should.not.exist(err)
         data.section.should.have.property('name', 'Test Section')
         data.article.should.have.property('longTitle', 'Hidden article')
+        done()
+      })
+    })
+
+    it('should support passing in options to the findPublic call', function (done) {
+      signpost.findArticle('/unittest/test-find-public-options', { sort: { longTitle: -1 } }, function (err, data) {
+        if (err) return done(err)
+
+        assert.equal(data.article.longTitle, 'ZZZZZ')
         done()
       })
     })
