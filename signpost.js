@@ -2,13 +2,13 @@ module.exports = signpost
 
 var urlParse = require('url').parse
 
-function signpost(sectionService, articleService) {
+function signpost (sectionService, articleService) {
   if (!sectionService) throw new Error('sectionService must be provided')
   if (!articleService) throw new Error('articleService must be provided')
 
   var self = {}
 
-  function findSection(url, cb) {
+  function findSection (url, cb) {
     var decodedUrl = decodeURI(url)
       , decodedUrlParts = urlParse(decodedUrl, true)
       , urlParts = urlParse(url, true)
@@ -33,7 +33,7 @@ function signpost(sectionService, articleService) {
     })
   }
 
-  function findArticle(url, cb) {
+  function findArticle (url, cb) {
     var decodedUrl = decodeURI(url)
       , decodedUrlParts = urlParse(decodedUrl, true)
       , urlParts = urlParse(url, true)
@@ -70,7 +70,7 @@ function signpost(sectionService, articleService) {
     })
   }
 
-  function returnArticle(article, cb) {
+  function returnArticle (article, cb) {
     article = getSingleArticle(article)
     if (!article) return cb(null, false)
 
@@ -81,7 +81,7 @@ function signpost(sectionService, articleService) {
     })
   }
 
-  function getSingleArticle(article) {
+  function getSingleArticle (article) {
     // article can come back as either a single article or an array
     if (Array.isArray(article)) {
       if (article.length === 0) {
@@ -93,7 +93,6 @@ function signpost(sectionService, articleService) {
       return article
     }
   }
-
 
   self.findSection = findSection
   self.findArticle = findArticle

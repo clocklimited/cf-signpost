@@ -7,8 +7,8 @@ module.exports =
         , publicQuery = _.extend({}, query,
           { visible: true
           , $and:
-            [ { $or: [{ liveDate: null }, { liveDate: { $lte: now } }] }
-            , { $or: [{ expiryDate: null }, { expiryDate: { $gte: now } } ] }
+            [ { $or: [ { liveDate: null }, { liveDate: { $lte: now } } ] }
+            , { $or: [ { expiryDate: null }, { expiryDate: { $gte: now } } ] }
             ]
           })
 

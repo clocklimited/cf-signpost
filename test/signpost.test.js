@@ -16,7 +16,7 @@ var createSignpost = require('../signpost')
 
 describe('signpost', function () {
 
-  function createSections(next) {
+  function createSections (next) {
     sl.get('persistence').register('section')
     sectionService = require('./mock-section-service')(sl)
     sl.register('sectionService', sectionService)
@@ -53,7 +53,7 @@ describe('signpost', function () {
       ], next)
   }
 
-  function createArticles(section, next) {
+  function createArticles (section, next) {
     sl.get('persistence').register('article')
     articleService = require('./mock-article-service')(sl)
     async.each(
@@ -93,10 +93,11 @@ describe('signpost', function () {
       ], articleService.create, next)
   }
 
-  function dbConnect(next) {
-    var mongoConnectionString = 'mongodb://' + mongoHost +':' + mongoPort + '/' +
+  function dbConnect (next) {
+    var mongoConnectionString = 'mongodb://' + mongoHost + ':' + mongoPort + '/' +
       Math.round(Math.random() * 100000000000).toString(36)
     MongoClient.connect(mongoConnectionString, function (err, db) {
+      if (err) return next(err)
 
       dbConnection = db
 
@@ -248,8 +249,8 @@ describe('signpost', function () {
       })
     })
 
-    it('should callback with an article and its section when a matching url'
-     + ' that contains url encodable characters is provided', function (done) {
+    it('should callback with an article and its section when a matching url' +
+      ' that contains url encodable characters is provided', function (done) {
       signpost.findArticle('/unittest/encodable-characters-(in)-slug-article', function (err, data) {
         should.not.exist(err)
         data.section.should.have.property('name', 'Test Section')
@@ -258,8 +259,8 @@ describe('signpost', function () {
       })
     })
 
-    it('should callback with an article and its section when a matching url'
-     + ' that has been url-encoded is provided', function (done) {
+    it('should callback with an article and its section when a matching url' +
+      ' that has been url-encoded is provided', function (done) {
       signpost.findArticle('/unittest/encodable-characters-%28in%29-slug-article', function (err, data) {
         should.not.exist(err)
         data.section.should.have.property('name', 'Test Section')
@@ -268,8 +269,8 @@ describe('signpost', function () {
       })
     })
 
-    it('should callback with an article and its section when a matching url'
-     + ' that has url-encoded characters is provided', function (done) {
+    it('should callback with an article and its section when a matching url' +
+      ' that has url-encoded characters is provided', function (done) {
       signpost.findArticle('/unittest/encoded-characters-in-%28slug%29-article', function (err, data) {
         should.not.exist(err)
         data.section.should.have.property('name', 'Test Section')
@@ -278,8 +279,8 @@ describe('signpost', function () {
       })
     })
 
-    it('should callback with an article and its section when a matching url'
-     + ' that has url-encoded characters is provided', function (done) {
+    it('should callback with an article and its section when a matching url' +
+      ' that has url-encoded characters is provided', function (done) {
       signpost.findArticle('/unittest/encoded-characters-in-%28slug%29-article', function (err, data) {
         should.not.exist(err)
         data.section.should.have.property('name', 'Test Section')

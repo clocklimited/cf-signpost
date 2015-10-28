@@ -14,7 +14,7 @@ module.exports = function (serviceLocator) {
     , originalPartialUpdate = service.partialUpdate
 
   // Override section create to know about the special 'root' section for the homepage
-  service.create = function create(section, createOptions, cb) {
+  service.create = function create (section, createOptions, cb) {
     if (typeof createOptions === 'function') {
       cb = createOptions
     }
@@ -32,10 +32,11 @@ module.exports = function (serviceLocator) {
     originalCreate(section, createOptions, cb)
   }
 
-  function updateChildSectionUrl(parentSection, done) {
+  function updateChildSectionUrl (parentSection, done) {
     service.find({ parent: parentSection._id }, function (error, childSections) {
+      if (error) return done(error)
       if (childSections.length > 0) {
-        async.each(childSections, function(childSection, cb) {
+        async.each(childSections, function (childSection, cb) {
           var fullUrlPath = parentSection.fullUrlPath + '/' + childSection.slug
           if (childSection.fullUrlPath === fullUrlPath) {
             return cb()
@@ -43,20 +44,16 @@ module.exports = function (serviceLocator) {
           service.partialUpdate(
             { fullUrlPath: fullUrlPath
             , _id: childSection._id }
-            , {}, function(error) {
-            cb(error)
-          })
+            , {}, cb)
 
-        }, function (error) {
-          done(error)
-        })
+        }, done)
       } else {
         done(null)
       }
     })
   }
 
-  function setFullUrlPath(section, next) {
+  function setFullUrlPath (section, next) {
     if (section.parent) {
       service.read(section.parent, function (error, parentSection) {
         if (error) {
