@@ -15,8 +15,15 @@ function signpost (sectionService, articleService) {
       options = {}
     }
 
-    var decodedUrl = decodeURI(url)
-      , decodedUrlParts = urlParse(decodedUrl, true)
+    var decodedUrl
+
+    try {
+      decodedUrl = decodeURI(url)
+    } catch (e) {
+      return cb(e)
+    }
+
+    var decodedUrlParts = urlParse(decodedUrl, true)
       , urlParts = urlParse(url, true)
       , query = { $or: [ { fullUrlPath: urlParts.pathname }, { fullUrlPath: decodedUrlParts.pathname } ] }
 
@@ -45,8 +52,15 @@ function signpost (sectionService, articleService) {
       options = {}
     }
 
-    var decodedUrl = decodeURI(url)
-      , decodedUrlParts = urlParse(decodedUrl, true)
+    var decodedUrl
+
+    try {
+      decodedUrl = decodeURI(url)
+    } catch (e) {
+      return cb(e)
+    }
+
+    var decodedUrlParts = urlParse(decodedUrl, true)
       , urlParts = urlParse(url, true)
       , lookupFn
 
