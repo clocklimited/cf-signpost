@@ -15,7 +15,7 @@ module.exports = function (serviceLocator) {
       options = {}
     }
 
-    function sectionsLookup(cb) {
+    function sectionsLookup (cb) {
       serviceLocator.get('sectionService').find({}, function (error, sections) {
         if (error) {
           return cb(error)
@@ -24,7 +24,7 @@ module.exports = function (serviceLocator) {
       })
     }
 
-    function getBreadcrumb(section, sectionMap) {
+    function getBreadcrumb (section, sectionMap) {
       var crumb = []
 
       if (sectionMap[section]) {
@@ -50,12 +50,12 @@ module.exports = function (serviceLocator) {
 
           // If the article has a section then embellish the object with useful
           // section related info
-          if ((sectionMap[article.section]) && (article.section !== null)){
+          if ((sectionMap[article.section]) && (article.section !== null)) {
             // Set the fullUrlPath from the section
-            article.__fullUrlPath = sectionMap[article.section].fullUrlPath
-              + '/' + article.slug
+            article.__fullUrlPath = sectionMap[article.section].fullUrlPath +
+              '/' + article.slug
 
-            //Remove double slashes in url path
+            // Remove double slashes in url path
             article.__fullUrlPath = article.__fullUrlPath.replace('//', '/')
 
             // Create the bread crumb
@@ -73,7 +73,7 @@ module.exports = function (serviceLocator) {
   }
 
   // Convert an array callback response to the first item in the list
-  function first(callback) {
+  function first (callback) {
     return function (error, items) {
       if (error) {
         return callback(error)
@@ -100,8 +100,7 @@ module.exports = function (serviceLocator) {
         return callback(null, undefined)
       }
       // then the matching articles
-      service.findPublic({ section: sections[0]._id, slug: slug},
-        options, first(callback))
+      service.findPublic({ section: sections[0]._id, slug: slug }, options, first(callback))
     })
   }
 

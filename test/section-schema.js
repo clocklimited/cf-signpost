@@ -119,7 +119,7 @@ module.exports = function () {
       { type: String
       , tag: ['root']
       , defaultValue: function () {
-          //TODO: Ensure no clash - Serby
+          // TODO: Ensure no clash - Serby
           return Math.round(Math.random() * 100000000000).toString(36)
         }
       }

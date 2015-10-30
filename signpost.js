@@ -2,13 +2,19 @@ module.exports = signpost
 
 var urlParse = require('url').parse
 
-function signpost(sectionService, articleService) {
+function signpost (sectionService, articleService) {
   if (!sectionService) throw new Error('sectionService must be provided')
   if (!articleService) throw new Error('articleService must be provided')
 
   var self = {}
 
-  function findSection(url, cb) {
+  function findSection (url, options, cb) {
+    // No options provided, so default to {}
+    if (arguments.length === 2) {
+      cb = options
+      options = {}
+    }
+
     var decodedUrl
 
     try {
@@ -20,14 +26,13 @@ function signpost(sectionService, articleService) {
     var decodedUrlParts = urlParse(decodedUrl, true)
       , urlParts = urlParse(url, true)
       , query = { $or: [ { fullUrlPath: urlParts.pathname }, { fullUrlPath: decodedUrlParts.pathname } ] }
-      , options = {}
 
     if (typeof urlParts.query.previewId !== 'undefined') {
       query['previewId'] = urlParts.query.previewId
     }
 
     if (typeof urlParts.query.date !== 'undefined') {
-      options = { date: urlParts.query.date }
+      options.date = urlParts.query.date
     }
 
     sectionService.findPublic(query, options, function (error, sections) {
@@ -40,7 +45,13 @@ function signpost(sectionService, articleService) {
     })
   }
 
-  function findArticle(url, cb) {
+  function findArticle (url, options, cb) {
+    // No options provided, so default to {}
+    if (arguments.length === 2) {
+      cb = options
+      options = {}
+    }
+
     var decodedUrl
 
     try {
@@ -52,10 +63,9 @@ function signpost(sectionService, articleService) {
     var decodedUrlParts = urlParse(decodedUrl, true)
       , urlParts = urlParse(url, true)
       , lookupFn
-      , options = {}
 
     if (typeof urlParts.query.date !== 'undefined') {
-      options = { date: urlParts.query.date }
+      options.date = urlParts.query.date
     }
 
     if (typeof urlParts.query.previewId !== 'undefined') {
@@ -84,7 +94,7 @@ function signpost(sectionService, articleService) {
     })
   }
 
-  function returnArticle(article, cb) {
+  function returnArticle (article, cb) {
     article = getSingleArticle(article)
     if (!article) return cb(null, false)
 
@@ -95,7 +105,7 @@ function signpost(sectionService, articleService) {
     })
   }
 
-  function getSingleArticle(article) {
+  function getSingleArticle (article) {
     // article can come back as either a single article or an array
     if (Array.isArray(article)) {
       if (article.length === 0) {
@@ -107,7 +117,6 @@ function signpost(sectionService, articleService) {
       return article
     }
   }
-
 
   self.findSection = findSection
   self.findArticle = findArticle

@@ -1,0 +1,9 @@
+{
+  "extends": "clock",
+  "env": {
+    "es6": false
+  },
+  "rules": {
+    "one-var": 0
+  }
+}

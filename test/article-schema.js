@@ -3,7 +3,7 @@ var schemata = require('schemata')
   , dateBeforeExpiryValidator = require('validity-date-before-property')('expiryDate')
   , dateBeforeArchiveValidator = require('validity-date-before-property')('archiveDate', 'archive date')
 
-function requiredIfDisplayDateIsTrue(key, msg, object, callback) {
+function requiredIfDisplayDateIsTrue (key, msg, object, callback) {
   var valid = true
 
   // If the user does not intend to display the date, do not validate
@@ -297,7 +297,7 @@ module.exports = function () {
     , previewId:
       { type: String
       , defaultValue: function () {
-          //TODO: Ensure no clash - Serby
+          // TODO: Ensure no clash - Serby
           return Math.round(Math.random() * 100000000000).toString(36)
         }
       }
