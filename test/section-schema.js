@@ -55,9 +55,10 @@ module.exports = function () {
       { type: Object
       , tag: ['root']
       , defaultValue: function () {
-          var defaultValue = { '0': { id: '0', cols:
-            [ { id: '0:0', width: 2, order: 1, widgetArea: {} }
-            , { id: '0:1', width: 1, order: 3, widgetArea: {} }] }}
+          var defaultValue = { '0':
+            { id: '0'
+            , cols: [ { id: '0:0', width: 2, order: 1, widgetArea: {} }
+              , { id: '0:1', width: 1, order: 3, widgetArea: {} }] }}
           return defaultValue
         }
       }
@@ -65,12 +66,27 @@ module.exports = function () {
       { type: Object
       , tag: ['root']
       , defaultValue: function () {
-          var defaultValue = { '0': { id: '0', cols:
-            [ { id: '0:0', width: 2, order: 1, widgetArea:
-            { widgets:
-              [ { id: 0, type: 'articlePlaceholder' }
-              , { id: 1, type: 'relatedWidgets' }]} }
-            , { id: '0:1', width: 1, order: 3, widgetArea: {} }] }}
+          var defaultValue = { '0':
+            { id: '0'
+            , cols:
+              [ { id: '0:0'
+              , width: 2
+              , order: 1
+              , widgetArea:
+                { widgets:
+                  [ { id: 0
+                    , type: 'articlePlaceholder' }
+                  , { id: 1
+                    , type: 'relatedWidgets' } ]
+                  }
+                }
+                , { id: '0:1'
+                  , width: 1
+                  , order: 3
+                  , widgetArea: {}
+                  } ]
+                }
+            }
 
           return defaultValue
         }
