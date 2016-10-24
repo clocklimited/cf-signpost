@@ -9,15 +9,16 @@
     "url": "git@github.com:clocklimited/cf-signpost"
   },
   "publishConfig": {
-    "registry": "http://npm.clockte.ch"
+    "registry": "http://registry.npmjs.org"
   },
+  "license": "ISC",
   "main": "signpost.js",
   "scripts": {
-    "prepublish": "npm run-script lint && npm test",
+    "prepublish": "npm run lint && npm test",
     "start": "pliers -a go",
     "lint": "eslint -f unix .",
     "inspect": "jsinspect .",
-    "pretest": "rm -rf coverage && npm run lint && npm run inspect && depcheck --ignores 'eslint-*'",
+    "pretest": "rm -rf coverage && npm run lint && npm run inspect",
     "test": "istanbul cover _mocha -- -R spec",
     "posttest": "(istanbul check-coverage --statements 85 --branches 80 --functions 100 --lines 95 && rm -rf coverage) || echo Look at 'coverage/lcov-report/index.html' to find out more",
     "update-changelog": "update-changelog"
@@ -26,14 +27,13 @@
     "node": ">=0.8"
   },
   "dependencies": {
-    "moment": "~2.2.1"
   },
   "devDependencies": {
     "async": "~0.2.9",
+    "moment": "~2.2.1",
     "cf-changelog": "^1.0.1",
     "cf-visibility-check": "0.0.1",
     "crud-service": "0.0.5",
-    "depcheck": "gtanner/depcheck#84b47b9c54c6252c2604771e5ae13c573d6568e8",
     "eslint": "^1.7.3",
     "eslint-config-clock": "^1.0.0",
     "eslint-config-standard": "^4.4.0",
