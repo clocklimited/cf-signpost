@@ -1,5 +1,7 @@
 # cf-signpost
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/clocklimited/cf-signpost.svg)](https://greenkeeper.io/)
+
 URL routing for sections and articles
 
 ## Installation
